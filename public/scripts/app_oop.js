@@ -1,50 +1,35 @@
-
 // wait for DOM to load before running JS
 $(document).ready(function() {
+ app = new App();
+ app.render();
+ app.get();
+ app.post();
 
-  // base API route
-  var baseUrl = '/api/todos';
 
-  // array to hold todo data from API
-  var allTodos = [];
+function App(){
+ this.baseUrl = '/api/todos';
+ this.allTodos = [];
+ this.$todosList = $('#todos-list');
+ this.$createTodo = $('#create-todo');
+ this.source = $('#todos-template').html();
+this.template = Handlebars.compile(this.$source);
+}
 
-  // element to display list of todos
-  var $todosList = $('#todos-list');
+App.prototype.render = function(){
+ this.$todosList.empty();
+ this.$todosHtml = this.template({todos: this.allTodos});
+ this.$todosList.append(this.todosHtml);
+};
 
-  // form to create new todo
-  var $createTodo = $('#create-todo');
-
-  // compile handlebars template
-  var source = $('#todos-template').html();
-  var template = Handlebars.compile(source);
-
-  // helper function to render all todos to view
-  // note: we empty and re-render the collection each time our todo data changes
-  function render() {
-    // empty existing todos from view
-    $todosList.empty();
-
-    // pass `allTodos` into the template function
-    var todosHtml = template({ todos: allTodos });
-
-    // append html to the view
-    $todosList.append(todosHtml);
-  };
+App.prototype.get = function() {
+  var app = this;
+  $.get(this.baseUrl, function (data) {
+    app.allTodos = data.todos;
+    app.render();
+  });
+};
 
   // GET all todos on page load
-  $.ajax({
-    method: "GET",
-    url: baseUrl,
-    success: function onIndexSuccess(json) {
-      console.log(json);
-
-      // set `allTodos` to todo data (json.data) from API
-      allTodos = json.todos;
-
-      // render all todos to view
-      render();
-    }
-  });
 
   // listen for submit even on form
   $createTodo.on('submit', function (event) {
@@ -53,7 +38,13 @@ $(document).ready(function() {
     // serialze form data
     var newTodo = $(this).serialize();
 
-    // POST request to create new todo
+App.prototype.post = function(){
+    var app = this;
+    $.post(this.baseUrl, function(data){
+    });
+};   
+
+// POST request to create new todo
     $.ajax({
       method: "POST",
       url: baseUrl,
